@@ -1,62 +1,66 @@
 <h2>Workload Hardening Checks</h2>
 {{ range .Checks }}
-{{ $whc := . }}
-{{ if .ObjectMeta.OwnerReferences }}
-  {{/* Skip if there are owner references */}}
-  {{ continue }}
-{{ end }}
-<details name="whc">
-  <summary role="button" class="outline">
-    {{ if .Successful }}
-      <span style="color: green;">&#10004;</span>
-    {{ else if .Running  }}
-      <span style="color: orange;">&#9888;</span>
-    {{ else }}
-      <span style="color: red;">&#10008;</span>
-    {{ end }}
-    {{ .ObjectMeta.Namespace}}/{{ .ObjectMeta.Name }}
-  </summary>
-  <div class="grid" style="padding-bottom: 20px;">
-    <div>
-      <strong>Status: </strong>{{ if .Successful }}
+  {{ $whc := . }}
+  {{ if .ObjectMeta.OwnerReferences }}
+    {{/* Skip if there are owner references */}}
+    {{ continue }}
+  {{ end }}
+  <details name="whc">
+    <summary role="button" class="outline">
+      {{ if .Successful }}
         <span style="color: green;">&#10004;</span>
       {{ else if .Running  }}
         <span style="color: orange;">&#9888;</span>
       {{ else }}
         <span style="color: red;">&#10008;</span>
       {{ end }}
-    </div>
-    <div>
-      <strong>Target Reference:</strong> {{ .Spec.TargetRef.Kind }}/{{ .Spec.TargetRef.Name }}
-    </div>
-    <div>
-      <strong>Duration:</strong> {{ .Spec.RecordingDuration }}
-    </div>
-  </div>
-
-  <h4>Check Runs</h4>
-  {{ range $key, $checkRun := .GetRecordings }}
-  <details name="{{ $whc.ObjectMeta.Namespace}}-{{ $whc.ObjectMeta.Name }}-checkruns">
-    <summary role="button" class="outline secondary">
-      {{ if $checkRun.Success }}
-        <span style="color: green;">&#10004;</span>
-      {{ else }}
-        <span style="color: red;">&#10008;</span>
-      {{ end }}
-      {{ $checkRun.Type }}
+      {{ .ObjectMeta.Namespace}}/{{ .ObjectMeta.Name }}
     </summary>
-    <h5>Logs</h5>
-    {{ if not $checkRun.Logs }}
-      <p>No logs available.</p>
-    {{ else }}
-      {{ range $container, $logs := $checkRun.Logs }}
-        <h6>Container: {{ $container }}</h6>
-        <pre>{{ $logs | join "\n"}}</pre>
-      {{ end }}
-    {{ end }}
+    <div class="grid" style="padding-bottom: 20px;">
+      <div>
+        <strong>Status: </strong>{{ if .Successful }}
+          <span style="color: green;">&#10004;</span>
+        {{ else if .Running  }}
+          <span style="color: orange;">&#9888;</span>
+        {{ else }}
+          <span style="color: red;">&#10008;</span>
+        {{ end }}
+      </div>
+      <div>
+        <strong>Target Reference:</strong> {{ .Spec.TargetRef.Kind }}/{{ .Spec.TargetRef.Name }}
+      </div>
+      <div>
+        <strong>Duration:</strong> {{ .Spec.RecordingDuration }}
+      </div>
+    </div>
 
-      
+    <section style="width: 80%; margin-left: auto; margin-right: auto;">
+      {{ if not .GetRecordings }}
+        <p>No recordings available.</p>
+      {{ else }}
+        <h4>Check Runs</h4>
+        {{ range $key, $checkRun := .GetRecordings }}
+          <details name="{{ $whc.ObjectMeta.Namespace}}-{{ $whc.ObjectMeta.Name }}-checkruns">
+            <summary role="button" class="outline secondary">
+              {{ if $checkRun.Success }}
+                <span style="color: green;">&#10004;</span>
+              {{ else }}
+                <span style="color: red;">&#10008;</span>
+              {{ end }}
+              {{ $checkRun.Type }}
+            </summary>
+            <h5>Logs</h5>
+            {{ if not $checkRun.Logs }}
+              <p>No logs available.</p>
+            {{ else }}
+              {{ range $container, $logs := $checkRun.Logs }}
+                <h6>Container: {{ $container }}</h6>
+                <pre>{{ $logs | join "\n"}}</pre>
+              {{ end }}
+            {{ end }}
+          </details>
+        {{ end }}
+      {{ end }}
+    </section>
   </details>
-  {{ end }}
-</details>
 {{ end }}
