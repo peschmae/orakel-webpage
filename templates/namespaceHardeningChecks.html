@@ -64,11 +64,29 @@
             </div>
           </div>
 
+          <section>
+            <h4>Recommendations</h4>
+            <div class="grid">
+              <div>
+                <strong>ContainerSecurityContext</strong><br />
+                <pre>
+{{ toPrettyJson .Status.Recommendation.ContainerSecurityContexts }}
+                </pre>
+              </div>
+              <div>
+                <strong>PodSecurityContext</strong><br />
+                <pre>
+{{ toPrettyJson .Status.Recommendation.PodSecurityContext }}
+                </pre>
+              </div>
+            </div>
+          </section>
+
           <section style="width: 80%; margin-left: auto; margin-right: auto;">
+            <h4>Check Runs</h4>
             {{ if eq (len $whc.Recordings) 0 }}
               <p>No recordings available.</p>
             {{ else }}
-              <h4>Check Runs</h4>
               {{ range $key, $checkRecording := $whc.Recordings }}
               {{ $checkRun := index $whc.Status.CheckRuns $key }}
                 <details name="{{ $whc.ObjectMeta.Namespace}}-{{ $whc.ObjectMeta.Name }}-checkruns">
