@@ -32,23 +32,33 @@
       </div>
     </div>
 
+    {{ if .Status.Recommendation }}
     <section>
       <h4>Recommendations</h4>
       <div class="grid">
         <div>
           <strong>ContainerSecurityContext</strong><br />
+          {{ if .Status.Recommendation.ContainerSecurityContexts}}
           <pre>
 {{ toPrettyJson .Status.Recommendation.ContainerSecurityContexts }}
           </pre>
+          {{ else }}
+          No recommendation yet
+          {{ end }}
         </div>
         <div>
           <strong>PodSecurityContext</strong><br />
+          {{ if .Status.Recommendation.PodSecurityContext }}
           <pre>
 {{ toPrettyJson .Status.Recommendation.PodSecurityContext }}
           </pre>
+          {{ else }}
+          No recommendation yet
+          {{ end }}
         </div>
       </div>
     </section>
+    {{ end }}
 
     <section style="width: 80%; margin-left: auto; margin-right: auto;">
       <h4>Check Runs</h4>
