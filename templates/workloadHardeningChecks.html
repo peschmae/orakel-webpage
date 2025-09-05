@@ -40,21 +40,66 @@
         <p>No recordings available.</p>
       {{ else }}
         <h4>Check Runs</h4>
-        {{ range $key, $checkRun := .GetRecordings }}
+        {{ range $key, $checkRecording := .GetRecordings }}
+        {{ $checkRun := index $whc.Status.CheckRuns $key }}
           <details name="{{ $whc.ObjectMeta.Namespace}}-{{ $whc.ObjectMeta.Name }}-checkruns">
             <summary role="button" class="outline secondary">
-              {{ if $checkRun.Success }}
+              {{ if $checkRun.CheckSuccessfull }}
                 <span style="color: green;">&#10004;</span>
               {{ else }}
                 <span style="color: red;">&#10008;</span>
               {{ end }}
-              {{ $checkRun.Type }}
+              {{ $checkRecording.Type }}
             </summary>
+            <div class="grid">
+              <div>
+                <strong>Check: </strong>
+                {{ if $checkRun.CheckSuccessfull }}
+                  <span style="color: green;">&#10004;</span>
+                {{ else }}
+                  <span style="color: red;">&#10008;</span>
+                {{ end }}
+              </div>
+              <div>
+                <strong>Recording: </strong>
+                {{ if $checkRun.RecordingSuccessfull }}
+                  <span style="color: green;">&#10004;</span>
+                {{ else }}
+                  <span style="color: red;">&#10008;</span>
+                {{ end }}
+              </div>
+              <div>
+                <strong>CPU: </strong>
+                {{ if $checkRun.CpuDeviation }}
+                  <span style="color: green;">&#10004;</span>
+                {{ else }}
+                  <span style="color: red;">&#10008;</span>
+                {{ end }}
+              </div>
+              <div>
+                <strong>Memory: </strong>
+                {{ if $checkRun.MemoryDeviation }}
+                  <span style="color: green;">&#10004;</span>
+                {{ else }}
+                  <span style="color: red;">&#10008;</span>
+                {{ end }}
+              </div>
+            </div>
+            {{ if $checkRun.FailureReason }}
+              <p><strong>Failure Reason:</strong> {{ $checkRun.FailureReason }}</p>
+            {{ end }}
+            {{ if not $checkRun.*CheckSuccessfull }}
+              <h5>Log anomalies</h5>
+              {{ range $container, $logs := $checkRun.LogAnomalies }}
+                <h6>Container: {{ $container }}</h6>
+                <pre>{{ $logs | join "\n"}}</pre>
+              {{ end }}
+            {{ end }}
             <h5>Logs</h5>
-            {{ if not $checkRun.Logs }}
+            {{ if not $checkRecording.Logs }}
               <p>No logs available.</p>
             {{ else }}
-              {{ range $container, $logs := $checkRun.Logs }}
+              {{ range $container, $logs := $checkRecording.Logs }}
                 <h6>Container: {{ $container }}</h6>
                 <pre>{{ $logs | join "\n"}}</pre>
               {{ end }}
